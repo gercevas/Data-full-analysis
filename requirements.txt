@@ -1,0 +1,14 @@
+et_xmlfile==2.0.0
+-e git+https://github.com/gercevas/Data-full-analysis.git@b5ac7b632f37fc1c4aa1a8720e07a9c2ff85994a#egg=Hojas_excel
+iniconfig==2.1.0
+numpy==2.3.0
+openpyxl==3.1.5
+packaging==25.0
+pandas==2.3.0
+pluggy==1.6.0
+Pygments==2.19.1
+pytest==8.4.1
+python-dateutil==2.9.0.post0
+pytz==2025.2
+six==1.17.0
+tzdata==2025.2

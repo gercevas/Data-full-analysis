@@ -1,0 +1,23 @@
+import pandas as pd
+from calculo_emisiones import calcular_emisiones
+
+def test_calculo_emisiones():
+    # Crear un DataFrame simulado con categorías conocidas
+    df = pd.DataFrame({
+        'Id': [1, 2, 3],
+        'CENSO': [100, 200, 50],
+        'CATEGORIA': ['Vacuno de Leche', 'Porcino', 'Ovino'],
+        'ESPECIE': ['BOVINO', 'PORCINO', 'OVINO']
+    })
+
+    df_resultado = calcular_emisiones(df)
+
+    # Comprobación de columnas nuevas
+    for col in ['Fermentacion_enterica', 'Gestion_estiercol', 'NO2_Solido', 'NO2_Liquido', 'NO2_Diaria']:
+        assert col in df_resultado.columns
+        assert df_resultado[col].notnull().all()
+
+    # Comprobación de algunos valores aproximados
+    assert round(df_resultado.loc[0, 'Fermentacion_enterica'], 2) == round(100 * 124.8 * 1e-3, 2)
+    assert df_resultado.loc[1, 'CATEGORIA'] == 'Porcino'
+    assert df_resultado['NO2_Solido'].sum() > 0

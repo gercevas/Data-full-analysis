@@ -1,5 +1,7 @@
 import os
+import sys
 import pandas as pd
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.Hojas_excel.lector_excel import LectorExcel
 from src.Hojas_excel.categorizar_ganado import categorizar_ganado
 from src.Hojas_excel.calculo_emisiones import calcular_emisiones

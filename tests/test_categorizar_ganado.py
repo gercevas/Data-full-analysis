@@ -1,7 +1,12 @@
+import os
+import sys
 import unittest
 import pandas as pd
-from src.Hojas_excel.categorizar_ganado import categorizar_ganado
 
+
+# Añadir el directorio raíz al path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from Hojas_excel.categorizar_ganado import categorizar_ganado
 class TestCategorizacionGanado(unittest.TestCase):
     """Pruebas para la función categorizar_ganado."""
 

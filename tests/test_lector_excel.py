@@ -1,6 +1,10 @@
-import unittest
 import os
+import sys
+import unittest
 import pandas as pd
+
+# Añadir el directorio raíz al path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Hojas_excel.lector_excel import LectorExcel
 
 class TestLectorExcel(unittest.TestCase):

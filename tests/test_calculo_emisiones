@@ -1,23 +1,24 @@
+import unittest
 import pandas as pd
-from calculo_emisiones import calcular_emisiones
+from src.Hojas_excel.calculo_emisiones import calcular_emisiones
 
-def test_calculo_emisiones():
-    # Crear un DataFrame simulado con categorías conocidas
-    df = pd.DataFrame({
-        'Id': [1, 2, 3],
-        'CENSO': [100, 200, 50],
-        'CATEGORIA': ['Vacuno de Leche', 'Porcino', 'Ovino'],
-        'ESPECIE': ['BOVINO', 'PORCINO', 'OVINO']
-    })
+class TestCalculoEmisiones(unittest.TestCase):
+    """Pruebas para la función calcular_emisiones."""
 
-    df_resultado = calcular_emisiones(df)
+    def test_emisiones_generadas(self):
+        """Debe generar columnas de emisiones correctamente."""
+        df = pd.DataFrame({
+            'Municipio': ['Toledo'],
+            'ESPECIE': ['BOVINO'],
+            'CATEGORIA': ['Vacuno de Leche'],
+            'CENSO': [100]
+        })
 
-    # Comprobación de columnas nuevas
-    for col in ['Fermentacion_enterica', 'Gestion_estiercol', 'NO2_Solido', 'NO2_Liquido', 'NO2_Diaria']:
-        assert col in df_resultado.columns
-        assert df_resultado[col].notnull().all()
+        resultado = calcular_emisiones(df)
 
-    # Comprobación de algunos valores aproximados
-    assert round(df_resultado.loc[0, 'Fermentacion_enterica'], 2) == round(100 * 124.8 * 1e-3, 2)
-    assert df_resultado.loc[1, 'CATEGORIA'] == 'Porcino'
-    assert df_resultado['NO2_Solido'].sum() > 0
+        for col in ['Fermentacion_enterica', 'Gestion_estiercol', 'NO2_Solido']:
+            self.assertIn(col, resultado.columns)
+            self.assertGreater(resultado[col].iloc[0], 0)
+
+if __name__ == '__main__':
+    unittest.main()

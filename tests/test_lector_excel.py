@@ -1,7 +1,7 @@
 import unittest
 import os
 import pandas as pd
-from src.Hojas_excel.lector_excel import LectorExcel
+from Hojas_excel.lector_excel import Lector_excel
 
 class TestLectorExcel(unittest.TestCase):
     """Pruebas para la clase LectorExcel."""

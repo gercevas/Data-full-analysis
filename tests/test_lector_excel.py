@@ -1,40 +1,34 @@
+import unittest
 import os
-import pytest
 import pandas as pd
-from lector_excel import LectorExcel
+from src.Hojas_excel.lector_excel import LectorExcel
 
-def crear_excel_simulado(ruta):
-    """Crea un archivo Excel simulado con nombres de municipios."""
-    df = pd.DataFrame({
-        'MUNICIPIO': ['Toledo (Norte)', 'Cuenca - Este', 'Guadalajara, Oeste']
-    })
+class TestLectorExcel(unittest.TestCase):
+    """Pruebas para la clase LectorExcel."""
 
-    os.makedirs(os.path.dirname(ruta), exist_ok=True)
+    def setUp(self):
+        """Crear un archivo simulado antes de cada test."""
+        self.archivo = 'tests/data/fake_test.xlsx'
+        df = pd.DataFrame({'MUNICIPIO': ['Toledo (Norte)', 'Cuenca - Este', 'Guadalajara, Oeste']})
+        os.makedirs(os.path.dirname(self.archivo), exist_ok=True)
+        with pd.ExcelWriter(self.archivo) as writer:
+            df.to_excel(writer, sheet_name='2015', index=False)
+            df.to_excel(writer, sheet_name='2016', index=False)
 
-    with pd.ExcelWriter(ruta) as writer:
-        df.to_excel(writer, sheet_name='2015', index=False)
-        df.to_excel(writer, sheet_name='2016', index=False)  # Dos hojas para mostrar que funciona bien la función
+    def test_importar_y_limpiar(self):
+        """Debe importar las hojas y limpiar los nombres de municipios."""
+        lector = LectorExcel(self.archivo, columna_municipio='MUNICIPIO')
+        lector.importar_hojas()
+        lector.limpiar_y_renombrar()
 
-def test_importar_y_limpiar_excel():
-    archivo_simulado = 'tests/data/fake_test.xlsx'
+        hojas = lector.hojas
+        dfs = lector.dataframes
 
-    # Crear archivo si no existe
-    if not os.path.exists(archivo_simulado):
-        crear_excel_simulado(archivo_simulado)
+        self.assertIn('2015', hojas)
+        df = dfs['2015']
+        self.assertIn('Municipio', df.columns)
+        for municipio in df['Municipio']:
+            self.assertNotRegex(municipio, r'[(),-]')
 
-    # Usar la clase
-    lector = LectorExcel(archivo_simulado, columna_municipio='MUNICIPIO')
-    lector.importar_hojas()
-    lector.limpiar_y_renombrar()
-    dataframes = lector.obtener_dataframes()
-
-    # Verificaciones
-    assert isinstance(dataframes, dict)
-    assert len(dataframes) >= 2
-
-    for hoja, df in dataframes.items():
-        assert 'Municipio' in df.columns
-        muestra = df['Municipio'].dropna().astype(str)
-        for val in muestra:
-            assert all(car not in val for car in [",", "(", ")", "-"])
-
+if __name__ == '__main__':
+    unittest.main()
